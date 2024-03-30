@@ -10,6 +10,9 @@ seniority_level_3 = ["Senior Associate", "Supervisor", "Team Leader", "Project C
 seniority_level_4 = ["Manager", "Senior Manager", "Project Manager", "Department Manager", "Team Manager", "Senior Developer", "Senior Designer", "Senior Engineer", "Senior Consultant", "Lead", "Chief Specialist"]
 seniority_level_5 = ["Director", "Senior Director", "Vice President", "Executive Director", "Chief Officer (CEO, CTO, CFO, COO)", "Chief Executive Officer", "Chief Technology Officer", "Chief Financial Officer", "Chief Operating Officer", "President"]
 
+if "nb_feedbacks" not in st.session_state:
+    st.session_state["nb_feedbacks"] = 0
+
 def load_experience():
     # Load experiences
     raw_sql = """
@@ -151,10 +154,14 @@ Level 5: {seniority_level_5}
                 "importance": importance_score,
             }
             insert_data([new_record], db.schema.classes.linkedin_people_experience_feedback, ["feedback_id"])
+            st.session_state["nb_feedbacks"] += 1
         
         new_experience = st.form_submit_button("New Experience",help="Click here to get a new experience without submitting feedback on the current one.")
         if new_experience:
             st.rerun()
 
-if __name__ == "__main__":
-    main()
+    nb_feedbacks = st.session_state["nb_feedbacks"]
+    if nb_feedbacks % 10 == 0 and nb_feedbacks > 0:
+        st.write(f"You have submitted {nb_feedbacks} feedbacks! Thank you very much! Let's keep going!")
+    else:
+        st.write(f"Number of feedbacks submitted: {nb_feedbacks}")
