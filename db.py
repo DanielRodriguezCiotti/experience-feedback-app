@@ -1,17 +1,11 @@
-import os
-import json
-import numpy as np
 
-import sqlalchemy
+import streamlit as st
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
 from sqlalchemy.ext.automap import automap_base
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-
-
 
 # Get database URL from environment variables
-DATABASE_URL = os.environ.get('DATABASE_URL', None)
+DATABASE_URL = st.secrets["DATABASE_URL"]
 
 # Ensure the database URL is set
 if not DATABASE_URL:
