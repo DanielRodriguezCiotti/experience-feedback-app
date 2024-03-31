@@ -165,3 +165,7 @@ Level 5: {seniority_level_5}
         st.write(f"You have submitted {nb_feedbacks} feedbacks! Thank you very much! Let's keep going!")
     else:
         st.write(f"Number of feedbacks submitted: {nb_feedbacks}")
+
+
+if __name__ == "__main__":
+    main()
