@@ -141,10 +141,11 @@ Level 5: {seniority_level_5}
     keywords_presentation = ""
     if not keywords_df.empty:
         for keywords_type in keywords_df["type"].unique():
-            keywords_presentation += f"**{keywords_type}**:  \n"
-            for keyw in keywords_df[keywords_df["type"] == keywords_type]["keyword"].values:
-                keywords_presentation += f"- {keyw}\n"
-            keywords_presentation += "  \n"
+            if not (keywords_type in ["generated_industry","generated_skill"]):
+                keywords_presentation += f"**{keywords_type}**:  \n"
+                for keyw in keywords_df[keywords_df["type"] == keywords_type]["keyword"].values:
+                    keywords_presentation += f"- {keyw}\n"
+                keywords_presentation += "  \n"
     
 
 
