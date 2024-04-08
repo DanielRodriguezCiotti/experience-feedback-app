@@ -45,7 +45,8 @@ def load_experience():
         linkedin_people_experience.description,
         linkedin_people_experience.company,
         linkedin_people_experience.industry,
-        linkedin_people_experience.role
+        linkedin_people_experience.role,
+        linkedin_people_experience.importance
     FROM people INNER JOIN linkedin_people_experience
     ON people.uuid = linkedin_people_experience.people_uuid
     WHERE linkedin_people_experience.experience_id NOT IN (SELECT experience_id FROM linkedin_people_experience_feedback)
@@ -132,7 +133,8 @@ Level 5: {seniority_level_5}
     markdown_presentation += f"**Seniority Level**: {record['seniority_level']}  \n"
     markdown_presentation += f"**Role**: {record['role']}  \n"
     markdown_presentation += f"**How Long Ago**: {record['how_long_ago']} years  \n"
-    markdown_presentation += f"**Duration**: {round(record['duration'],1)} years \n"
+    markdown_presentation += f"**Duration**: {round(record['duration'],1)} years  \n"
+    markdown_presentation += f"**Importance Score**: {round(record['importance']*4)}  \n"
 
     keywords_presentation = ""
     if not keywords_df.empty:
@@ -141,8 +143,6 @@ Level 5: {seniority_level_5}
             for keyw in keywords_df[keywords_df["type"] == keywords_type]["keyword"].values:
                 keywords_presentation += f"- {keyw}\n"
             keywords_presentation += "  \n"
-            # keywords_presentation += ", ".join(keywords_df[keywords_df["type"] == keywords_type]["keyword"].values)
-            # keywords_presentation += "  \n"
     
 
 
@@ -159,7 +159,8 @@ Level 5: {seniority_level_5}
         with st.expander("Keywords"):
             st.markdown(keywords_presentation)
         st.write("\n\n## Feedback")
-        importance_score = st.select_slider("Importance Score", options=[1, 2, 3, 4])
+        current_importance = round(record['importance']*4)
+        importance_score = st.select_slider("Importance Score", options=[1, 2, 3, 4],value=current_importance)
         senority_level_options = [1, 2, 3, 4, 5]
         senority_level_options.remove(record['seniority_level'])
         senority_level_options = [record['seniority_level']] + senority_level_options
