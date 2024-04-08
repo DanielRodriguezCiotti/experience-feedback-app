@@ -13,17 +13,19 @@ seniority_level_5 = ["Director", "Senior Director", "Vice President", "Executive
 if "nb_feedbacks" not in st.session_state:
     st.session_state["nb_feedbacks"] = 0
 
-def load_keywords(experience_id):
+def load_keywords(experience_id,people_uuid):
     # Load keywords
+    uuid = str(people_uuid)
     raw_sql = f"""
     SELECT
+        experience_id,
         keyword,
         type
     FROM linkedin_people_experience_keywords
-    WHERE experience_id = '{experience_id}';
+    WHERE people_uuid = '{uuid}';
     """
-
     keywords_df = pd.read_sql(raw_sql, db.connection)
+    keywords_df = keywords_df[keywords_df["experience_id"] == experience_id].copy()
     return keywords_df
 
 
@@ -56,7 +58,7 @@ def load_experience():
 
     experiences = pd.read_sql(raw_sql, db.connection)
     experience_record = experiences.to_dict(orient="records")[0]
-    keywords_df = load_keywords(experience_record["experience_id"])
+    keywords_df = load_keywords(experience_record["experience_id"],experience_record["uuid"])
     return experience_record , keywords_df
 
 def insert_data(data: list, table, index_elements):
