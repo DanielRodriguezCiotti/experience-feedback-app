@@ -13,6 +13,20 @@ seniority_level_5 = ["Director", "Senior Director", "Vice President", "Executive
 if "nb_feedbacks" not in st.session_state:
     st.session_state["nb_feedbacks"] = 0
 
+def load_keywords(experience_id):
+    # Load keywords
+    raw_sql = f"""
+    SELECT
+        keyword,
+        type
+    FROM linkedin_people_experience_keywords
+    WHERE experience_id = '{experience_id}';
+    """
+
+    keywords_df = pd.read_sql(raw_sql, db.connection)
+    return keywords_df
+
+
 def load_experience():
     # Load experiences
     raw_sql = """
@@ -41,7 +55,8 @@ def load_experience():
 
     experiences = pd.read_sql(raw_sql, db.connection)
     experience_record = experiences.to_dict(orient="records")[0]
-    return experience_record
+    keywords_df = load_keywords(experience_record["experience_id"])
+    return experience_record , keywords_df
 
 def insert_data(data: list, table, index_elements):
     """
@@ -66,7 +81,7 @@ def insert_data(data: list, table, index_elements):
         raise e
 
 def main():
-    record = load_experience()
+    record,keywords_df = load_experience()
 
     markdown_explanation = f"""
 ## Instructions
@@ -83,7 +98,7 @@ We computed 4 dimensions: :gray[**Seniority Level**], :gray[**Role**], :gray[**H
 4. Very Important  
   
 You can also provide feedback on ths Seniority Level dimensions and the Role dimension.  
-The role was computed using OpenAI's GPT-4 model.  
+The role was computed using OpenAI's GPT-3 model. Possible roles are advisor, investor, employee, partner.
 The Seniority Level was computed using a seniority level mapping (1 being the junior and 5 being the most senior). 
     """
     know_more_senority_mapping = f"""
@@ -119,6 +134,18 @@ Level 5: {seniority_level_5}
     markdown_presentation += f"**How Long Ago**: {record['how_long_ago']} years  \n"
     markdown_presentation += f"**Duration**: {round(record['duration'],1)} years \n"
 
+    keywords_presentation = ""
+    if not keywords_df.empty:
+        for keywords_type in keywords_df["type"].unique():
+            keywords_presentation += f"**{keywords_type}**:  \n"
+            for keyw in keywords_df[keywords_df["type"] == keywords_type]["keyword"].values:
+                keywords_presentation += f"- {keyw}\n"
+            keywords_presentation += "  \n"
+            # keywords_presentation += ", ".join(keywords_df[keywords_df["type"] == keywords_type]["keyword"].values)
+            # keywords_presentation += "  \n"
+    
+
+
 
     
 
@@ -129,6 +156,8 @@ Level 5: {seniority_level_5}
 
     with st.form("Feedback Form"):
         st.markdown(markdown_presentation)
+        with st.expander("Keywords"):
+            st.markdown(keywords_presentation)
         st.write("\n\n## Feedback")
         importance_score = st.select_slider("Importance Score", options=[1, 2, 3, 4])
         senority_level_options = [1, 2, 3, 4, 5]
@@ -139,6 +168,8 @@ Level 5: {seniority_level_5}
         role_options.remove(record['role'])
         role_options = [record['role']] + role_options
         role = st.selectbox("Role", options=role_options)
+
+
 
         # Every form must have a submit button.
         submitted = st.form_submit_button("Submit")
