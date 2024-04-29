@@ -101,7 +101,7 @@ We computed 4 dimensions: :gray[**Seniority Level**], :gray[**Role**], :gray[**H
 4. Very Important  
   
 You can also provide feedback on ths Seniority Level dimensions and the Role dimension.  
-The role was computed using OpenAI's GPT-3 model. Possible roles are advisor, investor, employee, partner.
+The role was computed using OpenAI's GPT-3 model. Possible roles are advisor, partner, investor, employee, cxo, founder.
 The Seniority Level was computed using a seniority level mapping (1 being the junior and 5 being the most senior). 
     """
     know_more_senority_mapping = f"""
@@ -168,7 +168,7 @@ Level 5: {seniority_level_5}
         senority_level_options.remove(record['seniority_level'])
         senority_level_options = [record['seniority_level']] + senority_level_options
         seniority_level = st.selectbox("Seniority Level", options=senority_level_options)
-        role_options = ["advisor", "investor", "employee", "partner"]
+        role_options = ["advisor", "investor", "employee", "partner", "cxo", "founder"]
         role_options.remove(record['role'])
         role_options = [record['role']] + role_options
         role = st.selectbox("Role", options=role_options)
