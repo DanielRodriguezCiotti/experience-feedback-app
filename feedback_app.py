@@ -48,6 +48,7 @@ def load_experience():
         linkedin_people_experience.company,
         linkedin_people_experience.industry,
         linkedin_people_experience.role,
+        linkedin_people_experience.nb_employee_range,
         linkedin_people_experience.importance
     FROM people INNER JOIN linkedin_people_experience
     ON people.uuid = linkedin_people_experience.people_uuid
@@ -130,6 +131,8 @@ Level 5: {seniority_level_5}
         markdown_presentation += f"**Description**: {record['description']}  \n"
     if record['industry']:
         markdown_presentation += f"**Industry**: {record['industry']}  \n"
+    if record['nb_employee_range']:
+        markdown_presentation += f"**Employee Count Range**: {record['nb_employee_range']}  \n"
 
     markdown_presentation+= "  \n  \n"
     markdown_presentation += f"**Seniority Level**: {record['seniority_level']}  \n"
