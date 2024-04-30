@@ -1,4 +1,5 @@
 import db
+import math
 import pandas as pd
 import streamlit as st
 from sqlalchemy.dialects.postgresql import insert
@@ -139,7 +140,7 @@ Level 5: {seniority_level_5}
     markdown_presentation += f"**Role**: {record['role']}  \n"
     markdown_presentation += f"**How Long Ago**: {record['how_long_ago']} years  \n"
     markdown_presentation += f"**Duration**: {round(record['duration'],1)} years  \n"
-    if record['importance']:
+    if not math.isnan(record['importance']):
         markdown_presentation += f"**Importance Score**: {round(record['importance']*4)}  \n"
 
     keywords_presentation = ""
@@ -166,7 +167,7 @@ Level 5: {seniority_level_5}
         with st.expander("Keywords"):
             st.markdown(keywords_presentation)
         st.write("\n\n## Feedback")
-        if record['importance']:
+        if not math.isnan(record['importance']):
             current_importance = round(record['importance']*4)
         else:
             current_importance = 2
