@@ -139,7 +139,8 @@ Level 5: {seniority_level_5}
     markdown_presentation += f"**Role**: {record['role']}  \n"
     markdown_presentation += f"**How Long Ago**: {record['how_long_ago']} years  \n"
     markdown_presentation += f"**Duration**: {round(record['duration'],1)} years  \n"
-    markdown_presentation += f"**Importance Score**: {round(record['importance']*4)}  \n"
+    if record['importance']:
+        markdown_presentation += f"**Importance Score**: {round(record['importance']*4)}  \n"
 
     keywords_presentation = ""
     if not keywords_df.empty:
@@ -165,7 +166,10 @@ Level 5: {seniority_level_5}
         with st.expander("Keywords"):
             st.markdown(keywords_presentation)
         st.write("\n\n## Feedback")
-        current_importance = round(record['importance']*4)
+        if record['importance']:
+            current_importance = round(record['importance']*4)
+        else:
+            current_importance = 2
         importance_score = st.select_slider("Importance Score", options=[1, 2, 3, 4],value=current_importance)
         senority_level_options = [1, 2, 3, 4, 5]
         senority_level_options.remove(record['seniority_level'])
